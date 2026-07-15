@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Mundial de Comidas - Dark Edition</title>
+    <style>
+        /* CSS MEJORADO: DARK MODE & HIGH QUALITY BACKGROUND */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body { 
+            width: 100%; 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+        }
+
+        body { 
+            background-image: url('https://content.nationalgeographic.com.es/medio/2022/12/01/perfect-mirror_c5a8b00a_221201173058_2000x1333.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 20px; 
+            color: #ffffff;
+        }
+
+        /* Capa para resaltar la calidad del paisaje y oscurecer sutilmente */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.4)); /* Degradado para dar profundidad */
+            z-index: -1;
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 50px; 
+            width: 100%; 
+            background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 { font-size: clamp(2rem, 8vw, 3.5rem); color: #ffffff; margin-bottom: 10px; letter-spacing: -1px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .subtitle { font-size: 1.2rem; color: #ff9f43; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .contenedor { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            width: 100%; 
+            max-width: 1400px; 
+            padding: 0 10px; 
+        }
+
+        /* TARJETAS OSCURAS (DARK CARDS) */
+        .plato { 
+            background: rgba(20, 20, 20, 0.85); /* Fondo muy oscuro y elegante */
+            border-radius: 25px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; 
+            flex-direction: column; 
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+
+        .plato:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); 
+            border: 1px solid rgba(255,159,67,0.5);
+        }
+
+        .plato img { width: 100%; height: 240px; object-fit: cover; transition: transform 0.5s ease; cursor: pointer; filter: brightness(0.9); }
+        .plato:hover img { transform: scale(1.1); filter: brightness(1.1); }
+        
+        .plato .info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .plato h2 { 
+            font-size: 1.6rem; 
+            margin-bottom: 8px; 
+            color: #ffffff; 
+            cursor: pointer; 
+            transition: color 0.3s;
+        }
+        .plato h2:hover { color: #ff9f43; }
+
+        .plato p { font-size: 1rem; color: #cccccc; margin-bottom: 15px; font-weight: 400; }
+        
+        .puntos-badge {
+            background: rgba(255, 159, 67, 0.15);
+            padding: 10px 18px;
+            border-radius: 15px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff9f43;
+            border: 1px solid rgba(255,159,67,0.3);
+            font-size: 1.1rem;
+        }
+
+        .botones { display: flex; gap: 12px; }
+        .botones button { 
+            flex: 1; 
+            font-size: 1.6rem; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.1); 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .botones button:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+        .posicion {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ff9f43;
+            color: #000;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(255,159,67,0.4);
+            font-size: 0.85rem;
+        }
+
+        /* MODAL DARK */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 40px;
+            border-radius: 35px;
+            max-width: 650px;
+            width: 100%;
+            position: relative;
+            animation: slideUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(80px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+        .close:hover { color: #ffffff; }
+
+        .modal-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 480px) { .contenedor { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍽️ Califica Comidas del Mundo</h1>
+        <p class="subtitle">👑 sube | 🥭 igual | 💥 baja</p>
+    </header>
+
+    <div class="contenedor" id="contenedor-platos"></div>
+
+    <div id="modalDetalles" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <img id="modalImg" class="modal-img" src="" alt="">
+            <h2 id="modalTitulo" style="font-size: 2.2rem; margin-bottom: 5px;"></h2>
+            <h3 id="modalPais" style="color: #ff9f43; margin-bottom: 20px; font-size: 1.3rem;"></h3>
+            <p id="modalDescripcion" style="line-height: 1.8; color: #dddddd; font-size: 1.15rem;"></p>
+        </div>
+    </div>
+
+    <script>
+        let platos = [
+            { id: 1, nombre: "Pizza Napolitana", pais: "Italia 🇮🇹", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800", puntos: 0, desc: "La pizza original de Nápoles. Se caracteriza por su masa tierna y delgada pero con bordes altos. Sus ingredientes básicos son tomate San Marzano, mozzarella de búfala, aceite de oliva virgen extra y albahaca fresca." },
+            { id: 2, nombre: "Sushi Tradicional", pais: "Japón 🇯🇵", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800", puntos: 0, desc: "Arte culinario japonés basado en arroz aderezado con vinagre de arroz, azúcar y sal, combinado con ingredientes como pescado crudo, mariscos o verduras. Es un símbolo de frescura y precisión técnica." },
+            { id: 3, nombre: "Tacos al Pastor", pais: "México 🇲🇽", img: "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=800", puntos: 0, desc: "Uno de los tacos más icónicos de México. Consiste en carne de cerdo marinada en un adobo de especias y chiles, cocinada en un trompo y servida con piña, cebolla y cilantro en tortillas de maíz." },
+            { id: 4, nombre: "Paella Valenciana", pais: "España 🇪🇸", img: "https://images.unsplash.com/photo-1515443961218-a51367888e4b?w=800", puntos: 0, desc: "El plato más famoso de España. Originario de Valencia, se cocina en una sartén ancha llamada paella. Lleva arroz, pollo, conejo, judías verdes, garrofó y azafrán, que le da su color característico." },
+            { id: 5, nombre: "Hamburguesa Clásica", pais: "Estados Unidos 🇺🇸", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800", puntos: 0, desc: "Un icono global de la comida rápida. Consiste en un medallón de carne picada de res cocinado a la parrilla, servido dentro de un pan redondo con diversos acompañamientos como queso, lechuga y tomate." },
+            { id: 6, nombre: "Ramen de Tonkotsu", pais: "Japón 🇯🇵", img: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=800", puntos: 0, desc: "Una sopa de fideos japonesa originaria de Fukuoka. Su caldo se elabora hirviendo huesos de cerdo durante horas hasta obtener una textura cremosa y un sabor intenso. Se acompaña con chashu y huevo marinado." },
+            { id: 7, nombre: "Pasta Boloñesa", pais: "Italia 🇮🇹", img: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800", puntos: 0, desc: "Plato tradicional de Bolonia. Consiste en pasta servida con una salsa espesa a base de carne picada, sofrito de verduras, tomate y un toque de vino. Es un clásico reconfortante en todo el mundo." },
+            { id: 8, nombre: "Burrito Mexicano", pais: "México 🇲🇽", img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800", puntos: 0, desc: "Una tortilla de harina de trigo de gran tamaño que envuelve diversos ingredientes, comúnmente carne, frijoles refritos, arroz y queso. Es muy popular en la cocina fronteriza y del norte de México." },
+            { id: 9, nombre: "Pollo al Curry", pais: "India 🇮🇳", img: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=800", puntos: 0, desc: "Un plato vibrante y aromático de la India. Trozos de pollo cocinados en una salsa rica en especias como cúrcuma, comino, cilantro y jengibre. Se suele servir con arroz basmati o pan naan." },
+            { id: 10, nombre: "Helado Artesanal", pais: "Internacional 🌍", img: "https://heladoartesanal.com/wp-content/uploads/elementor/thumbs/helado-r5gpj9poo67yarbjb398o7ltl1fet200exi2mae7dk.webp", puntos: 0, desc: "Postre congelado elaborado con ingredientes naturales y menos aire que el helado industrial. Su textura es mucho más densa y cremosa, resaltando los sabores auténticos de frutas, frutos secos o chocolate." },
+            { id: 11, nombre: "Croissant Francés", pais: "Francia 🇫🇷", img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800", puntos: 0, desc: "Pieza de bollería hojaldrada en forma de media luna. Su secreto reside en las múltiples capas de masa y mantequilla que, al hornearse, crean una textura crujiente por fuera y aireada por dentro." },
+            { id: 12, nombre: "Fish & Chips", pais: "Reino Unido 🇬🇧", img: "https://images.unsplash.com/photo-1599307767316-776533bb941c?w=800", puntos: 0, desc: "Comida callejera británica por excelencia. Consiste en pescado (normalmente bacalao o abadejo) rebozado y frito, servido con patatas fritas gruesas. Se suele acompañar con puré de guisantes y vinagre." },
+            { id: 13, nombre: "Pato a la Pekinesa", pais: "China 🇨🇳", img: "https://images.unsplash.com/photo-1618449840665-9ed506d73a34?w=800", puntos: 0, desc: "Uno de los platos más célebres de la cocina china. El pato se asa hasta que la piel queda extremadamente crujiente y se sirve en finas láminas con crepes, cebolleta, pepino y salsa hoisin." },
+            { id: 14, nombre: "Falafel con Hummus", pais: "Medio Oriente 🥙", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?w=800", puntos: 0, desc: "Croquetas de garbanzos triturados con especias, fritas hasta quedar doradas. Se sirven tradicionalmente con hummus (crema de garbanzos y tahini) y pan de pita, siendo una opción vegetariana deliciosa." },
+            { id: 15, nombre: "Doner Kebab Mixto", pais: "Turquía 🇹🇷", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800", puntos: 0, desc: "Carne cocinada en un asador vertical giratorio. Se sirve en pan plano con ensalada fresca y salsas de yogur o picantes. Es un pilar de la gastronomía turca que se ha extendido por todo el mundo." },
+            { id: 16, nombre: "Feijoada Completa", pais: "Brasil 🇧🇷", img: "https://www.easyanddelish.com/wp-content/uploads/2012/04/feijoada-recipe-featured-image.jpg", puntos: 0, desc: "Considerado el plato nacional de Brasil. Es un guiso contundente de frijoles negros con diversas carnes de cerdo y res. Se sirve con arroz blanco, naranja, farofa y berza picada." },
+            { id: 17, nombre: "Dim Sum al Vapor", pais: "Hong Kong 🇭🇰", img: "https://images.unsplash.com/photo-1606471191009-63994c53433b?w=800", puntos: 0, desc: "Pequeños bocados de origen cantonés, generalmente cocinados al vapor en cestas de bambú. Pueden estar rellenos de carne, mariscos o verduras, y se sirven tradicionalmente con té." },
+            { id: 18, nombre: "Ceviche de Pescado", pais: "Perú 🇵🇪", img: "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=800", puntos: 0, desc: "Plato bandera de Perú. Consiste en trozos de pescado fresco marinados en jugo de limón (lima), ají, cebolla roja y cilantro. Se acompaña con camote (batata) y choclo (maíz tierno)." },
+            { id: 19, nombre: "Poutine Canadiense", pais: "Canadá 🇨🇦", img: "https://static01.nyt.com/images/2024/05/15/multimedia/mk-poutine-vqkt/mk-poutine-vqkt-threeByTwoLargeAt2X.jpg?format=pjpg&quality=75&auto=webp&disable=upscale", puntos: 0, desc: "Originario de Quebec, es un plato reconfortante de patatas fritas cubiertas con queso en grano fresco y bañadas en una salsa de carne caliente (gravy) que funde ligeramente el queso." },
+            { id: 20, nombre: "Lasaña de Carne", pais: "Italia 🇮🇹", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800", puntos: 0, desc: "Capas de láminas de pasta intercaladas con salsa boloñesa, bechamel y abundante queso parmesano, todo horneado hasta quedar dorado. Un plato familiar italiano que gusta a todo el mundo." },
+            { id: 21, nombre: "Bife de Chorizo", pais: "Argentina 🇦🇷", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800", puntos: 0, desc: "El corte de carne más famoso de las parrillas argentinas. Es un trozo grueso de lomo bajo de res, conocido por su jugosidad y su borde de grasa que le aporta un sabor inigualable al asarse." },
+            { id: 22, nombre: "Arepas de Reina Pepiada", pais: "Venezuela 🇻🇪", img: "https://imagenes.elpais.com/resizer/v2/D3R3LVQV2JDATLGCJIOCOEH3X4.jpg?auth=d6283ba32626f2c43d89530c401d95f21ab269146c9009cda3c02654fbe56ba8&width=1960&height=1103&smart=true", puntos: 0, desc: "La arepa más famosa de Venezuela. Su relleno es una mezcla cremosa de pollo desmechado, aguacate, mayonesa y un toque de cilantro. Fue creada en honor a una reina de belleza venezolana." },
+            { id: 23, nombre: "Couscous Real", pais: "Marruecos 🇲🇦", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpLkeqegHEnysJplL1YltSxIzxIUmwXLEmTV2cZisiwA&s=10", puntos: 0, desc: "Sémola de trigo cocida al vapor, servida con un guiso de verduras, garbanzos y diversas carnes. Es el plato central de la hospitalidad marroquí, aromatizado con especias como el ras el hanout." },
+            { id: 24, nombre: "Pierogi Tradicional", pais: "Polonia 🇵🇱", img: "https://eatingeuropean.com/wp-content/uploads/2014/12/pierogi-13.jpg", puntos: 0, desc: "Empanadillas polacas hervidas y luego a veces salteadas. Los rellenos más comunes son queso y patata, carne picada o chucrut con setas. Se sirven tradicionalmente con crema agria y cebolla frita." }
+        ];
+
+        const contenedor = document.getElementById('contenedor-platos');
+        const modal = document.getElementById('modalDetalles');
+
+        function actualizarRanking() {
+            platos.sort((a, b) => b.puntos - a.puntos);
+            contenedor.innerHTML = '';
+            platos.forEach((plato, index) => {
+                const card = document.createElement('div');
+                card.className = 'plato';
+                card.innerHTML = `
+                    <div class="posicion">RANKING #${index + 1}</div>
+                    <img src="${plato.img}" alt="${plato.nombre}" onclick="abrirModal(${plato.id})">
+                    <div class="info">
+                        <div>
+                            <h2 onclick="abrirModal(${plato.id})">${plato.nombre}</h2>
+                            <p>${plato.pais}</p>
+                        </div>
+                        <div class="puntos-badge">⭐ Puntos: ${plato.puntos}</div>
+                        <div class="botones">
+                            <button title="Bajar" onclick="cambiarPuntos(${plato.id}, -1)">🥭💥</button>
+                            <button title="Neutral" onclick="cambiarPuntos(${plato.id}, 0)">🥭</button>
+                            <button title="Subir" onclick="cambiarPuntos(${plato.id}, 1)">👑🥭</button>
+                        </div>
+                    </div>
+                `;
+                contenedor.appendChild(card);
+            });
+        }
+
+        function cambiarPuntos(id, delta) {
+            const plato = platos.find(p => p.id === id);
+            if (plato) {
+                plato.puntos += delta;
+                actualizarRanking();
+            }
+        }
+
+        function abrirModal(id) {
+            const plato = platos.find(p => p.id === id);
+            if (plato) {
+                document.getElementById('modalImg').src = plato.img;
+                document.getElementById('modalTitulo').innerText = plato.nombre;
+                document.getElementById('modalPais').innerText = plato.pais;
+                document.getElementById('modalDescripcion').innerText = plato.desc;
+                modal.style.display = "flex";
+            }
+        }
+
+        function cerrarModal() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                cerrarModal();
+            }
+        }
+
+        actualizarRanking();
+    </script>
+</body>
+</html>
